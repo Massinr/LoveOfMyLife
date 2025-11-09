@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>For you, Alae</title>
+<link rel="icon" type="image/x-icon" href="./logo.png">
+<style>
+:root{
+  --bg:#050405;
+  --card:#0b0b0b;
+  --red:#b71c1c;
+  --gold:#d4af37;
+  --glass: rgba(255,255,255,0.03);
+  --soft: 14px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:linear-gradient(180deg,#050405 0%, #0b0a0a 100%);
+  color:#fff;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  cursor:pointer;
+}
+#intro{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,0.15), rgba(0,0,0,0.7));
+  z-index:40;
+  gap:18px;
+}
+.intro-text{
+  font-weight:700;
+  font-size:36px;
+  opacity:0;
+  transform:translateY(12px);
+  color:var(--gold);
+  text-align:center;
+}
+.small-intro{
+  font-size:24px;
+  color:#fff;
+  opacity:0;
+  transform:translateY(12px);
+}
+.container{
+  position:relative;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+}
+.diagonal-wrap{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  z-index:0;
+  pointer-events:none;
+}
+.love-line{
+  position:absolute;
+  top:0;
+  left:-30%;
+  font-size:20px;
+  font-weight:600;
+  color:var(--gold);
+  opacity:0.12;
+  letter-spacing:2px;
+  transform:rotate(-20deg);
+}
+@keyframes moveDiag{
+  0%{transform:translate3d(-30vw, -10vh,0) rotate(-20deg)}
+  100%{transform:translate3d(120vw, 110vh,0) rotate(-20deg)}
+}
+.player-card{
+  width:min(860px,92vw);
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:16px;
+  padding:20px;
+  display:grid;
+  grid-template-columns: 150px 1fr;
+  gap:18px;
+  align-items:center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  border: 1px solid rgba(212,175,55,0.06);
+  z-index:2;
+  position:relative;
+  backdrop-filter: blur(6px);
+  opacity:0;
+  transform:translateY(8px);
+}
+.album{
+  width:150px;
+  height:150px;
+  border-radius:8px;
+  overflow:hidden;
+  background:linear-gradient(135deg, rgba(183,28,28,0.15), rgba(212,175,55,0.06));
+}
+.album img{width:100%;height:100%;object-fit:cover}
+.meta{display:flex;flex-direction:column;gap:8px}
+.song-title{font-size:20px;font-weight:700;color:#fff}
+.song-artist{color:rgba(255,255,255,0.75);font-size:14px}
+.song-quote{
+  color:rgba(212,175,55,0.9);
+  font-size:13px;
+  font-style:italic;
+  margin-top:6px;
+  line-height:1.4;
+}
+.controls{display:flex;align-items:center;gap:14px;margin-top:12px}
+.btn{
+  width:46px;height:46px;display:grid;place-items:center;
+  border-radius:12px;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(212,175,55,0.05);
+  cursor:pointer;transition:transform .18s ease;
+}
+.btn:active{transform:scale(.95)}
+.play{
+  width:64px;height:64px;border-radius:18px;display:grid;place-items:center;
+  background:linear-gradient(180deg,var(--red), #800000);
+  border:2px solid rgba(212,175,55,0.15);
+}
+.icon{width:20px;height:20px;fill:#fff}
+.progress{
+  height:6px;background:rgba(255,255,255,0.05);border-radius:6px;
+  margin-top:16px;overflow:hidden;
+}
+.progress > i{
+  display:block;height:100%;
+  background:linear-gradient(90deg,var(--gold),var(--red));
+  width:0%;transition:width .15s linear;
+}
+.message{
+  margin-top:20px;padding:18px;background:rgba(255,255,255,0.03);
+  border-radius:12px;color:rgba(255,255,255,0.92);
+  font-size:15px;text-align:center;min-height:72px;
+}
+.header-mini{
+  position:fixed;top:18px;left:18px;z-index:60;
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:999px;background:rgba(0,0,0,0.25);
+}
+.heart{
+  width:18px;height:18px;border-radius:6px;
+  background:linear-gradient(180deg,var(--red), #830000);
+}
+@media (max-width:640px){
+  .player-card{grid-template-columns:100px 1fr;padding:14px;border-radius:12px}
+  .album{width:100px;height:100px}
+  .song-title{font-size:16px}
+  .play{width:56px;height:56px}
+  .btn{width:40px;height:40px}
+  .intro-text{font-size:26px}
+  .small-intro{font-size:18px}
+}
+.fade-in{animation:fadeIn 1s forwards}
+.fade-out{animation:fadeOut .8s forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeOut{to{opacity:0;transform:translateY(-6px)}}
+
+/* Floating compliments */
+#player0 {
+  position: fixed;
+  bottom: -400px;
+  left: -700px;
+  pointer-events: none;
+  opacity: 0;
+}
+.compliment {
+  position: absolute;
+  color: gold;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  pointer-events: none;
+  animation: floatDiag 2s ease-out forwards;
+  text-shadow: 0 0 8px red, 0 0 15px gold;
+  z-index: 1000;
+}
+@keyframes floatDiag {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(120px, -120px) scale(1.2); opacity: 0; }
+}
+#player0 {
+  position: fixed;
+  bottom: -400px;
+  left: -700px;
+  pointer-events: none;
+  opacity: 0;
+}
+</style>
+</head>
+<body>
+<div id="intro">
+  <div class="intro-text" id="intro1">For the love of my life</div>
+  <div class="small-intro" id="intro2">For you, Alae 💫</div>
+</div>
+
+<div class="header-mini"><div class="heart"></div><div style="font-weight:700">Alae</div></div>
+
+<div class="container">
+  <div class="diagonal-wrap" id="diag"></div>
+
+  <div class="player-card" id="card">
+    <div class="album"><img id="albumImg" src="" alt="album"/></div>
+    <div>
+      <div class="meta">
+        <div class="song-title" id="title"></div>
+        <div class="song-artist" id="artist"></div>
+        <div class="song-quote" id="quote"></div>
+
+        <div class="controls">
+          <div class="btn" id="prevBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6v12l8.5-6zM16 6v12h2V6z"/></svg></div>
+          <div class="btn" id="nextBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M16 6v12l-8.5-6zM6 6v12h2V6z"/></svg></div>
+        </div>
+
+        <div class="progress" id="progress"><i></i></div>
+      </div>
+    </div>
+    <div style="grid-column:1/-1"><div class="message" id="message"></div></div>
+  </div>
+</div>
+
+<script>
+// Make sure YouTube API is loaded
+window.YT = window.YT || {};
+window.YT.ready = window.YT.ready || function(callback) {
+  if (window.YT.Player) {
+    callback();
+  } else {
+    setTimeout(() => window.YT.ready(callback), 100);
+  }
+};
+
+const tracks = [
+  { id:"P8BLkulZGX8", title:"El Mentira", artist:"Luis Miguel", msg:"Dima katfkarni bik had l2o4niya 💋", quote:"Que me quieres a pesar de lo que dices" },
+  { id:"j9yEL3B5Cvk", title:"Something About You", artist:"Dent May", msg:"Dima kanhlm bik, you never leave my mind", quote:"She looks just like a dream, the prettiest girl I've ever seen" },
+  { id:"fbn1sHtoQCM", title:"DAWINI", artist:"Sonia Noor", msg:"dlam w had l2o4niya w nti f bali❤️", quote:"داويني نبرا بجروحي، نصيب روحي، النور يتسنى" },
+  { id:"9woRPqcS63c", title:"C'est toi que jaime", artist:"Cheb Amrou", msg:"Nti li nebghi w hdrat nass raha zayda🌹", quote:"Nti li nebghi, w kolchi yfout" },
+  { id:"NQjxUPqgSKE", title:"Had zine ja me l'Allemagne", artist:"Cheb Hasni", msg:"Allemagne w 9lila f 7a9ek!!!", quote:"ڨلعت ڨلبي أنا، وزادت كيتي، العين زرڨة والخانة ها لغالي، دلالي" },
+  { id:"o8QSigd4jhw", title:"Oran Marseille", artist:"Khaled", msg:"Ya 3omri 9albi maynssakch", quote:"قولوا لعمري الكبدة اتقطعت بين زوج" },
+  { id:"abfQQ1hzN9M", title:"Et Si Tu N'Existais Pas", artist:"Joe Dassin", msg:"If you didn't exist fino l meaning f 7yati", quote:"Et si tu n'existais pas Dis-moi pourquoi j'existerai" },
+  { id:"A6ZLonRFs0I", title:"Un jour tu ris, un jour tu pleures", artist:"Julio Iglesias", msg:"Sma7li 7it kanka3ik ❤️", quote:"Histoire d'amour, Un jour ca va, un autre non" },
+  { id:"unf2AbrdXh0", title:"My funny valentine", artist:"Frank Sinatra", msg:"I love you for yourself, for being mine, thats the only reason I need❤️", quote:"Your looks are laughable, Unphotographable, Yet you're my favourite work of art" },
+  { id:"GS9GNwDG9hQ", title:"Oh la la l'amour", artist:"Julio Iglesias", msg:"My love for you tb9a wsst dlam del w 3jaj lbher", quote:"Oh la la, l'amour au cœur du Pacifique" },
+  { id:"AKDLoUSaPV8", title:"Love In Portofino", artist:"Dalida", msg:"Honey Moon f Italy?", quote:"I found my love in Portofino, Perché nei sogni credo ancor" },
+  { id:"fVfnEyLOkrM", title:"La bohème", artist:"Charles Aznavour", msg:"Wsst l chaos, i will always love you🌹", quote:"La Bohème, Ça voulait dire, Tu es jolie " },
+];
+//Kh8mV20wJ1s
+tracks.forEach(t => t.thumb = `https://img.youtube.com/vi/${t.id}/hqdefault.jpg`);
+
+let current = 0;
+const titleEl = document.getElementById('title');
+const artistEl = document.getElementById('artist');
+const quoteEl = document.getElementById('quote');
+const albumImg = document.getElementById('albumImg');
+const messageEl = document.getElementById('message');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+const progressBar = document.querySelector('#progress i');
+
+// Diagonal lines
+function createDiagonalLines(){
+  const diag = document.getElementById('diag');
+  for(let i=0;i<12;i++){
+    const el=document.createElement('div');
+    el.className='love-line';
+    el.textContent='I LOVE YOU';
+    el.style.top=Math.random()*80+'%';
+    el.style.left=(-40+Math.random()*30)+'%';
+    el.style.opacity=(0.08+Math.random()*0.1);
+    el.style.animation=`moveDiag ${18+Math.random()*18}s linear ${-Math.random()*20}s infinite`;
+    diag.appendChild(el);
+  }
+}
+createDiagonalLines();
+
+// Intro
+function showIntro(){
+  document.getElementById('intro1').classList.add('fade-in');
+  setTimeout(()=>document.getElementById('intro2').classList.add('fade-in'),800);
+  setTimeout(()=>{
+    const intro = document.getElementById('intro');
+    intro.classList.add('fade-out');
+    setTimeout(()=>{intro.remove();document.getElementById('card').classList.add('fade-in');updateUI();},500);
+  },1800);
+}
+showIntro();
+
+// Update UI
+function updateUI(){
+  const t = tracks[current];
+  titleEl.textContent = t.title;
+  artistEl.textContent = t.artist;
+  quoteEl.textContent = '"' + t.quote + '"';
+  albumImg.src = t.thumb;
+  messageEl.textContent = t.msg;
+  
+  // Animate progress bar
+  progressBar.style.width = '0%';
+  setTimeout(() => {
+    progressBar.style.transition = 'width 3s ease-out';
+    progressBar.style.width = '100%';
+  }, 100);
+}
+
+function nextTrack(){ 
+  current = (current + 1) % tracks.length;
+  updateUI();
+}
+
+function prevTrack(){ 
+  current = (current - 1 + tracks.length) % tracks.length;
+  updateUI();
+}
+
+nextBtn.onclick = nextTrack;
+prevBtn.onclick = prevTrack;
+
+// Floating compliments
+const compliments = ["your smile","your laugh","your eyes","your kindness","your spirit","the way you talk","your sense of humor","your patience","the way you care for others","your intelligence","your creativity","the way you make me feel safe","your confidence","your little things you do without me asking","your hugs","the way you think about people","your honesty","your loyalty","your warmth","your understanding","your energy","your style","your taste in music","the way you listen","your courage","your curiosity","your generosity","the way you light up a room","your determination","your dreams","your focus","your charm","your spontaneity","your love for life","your empathy","your little quirks","your sweetness","your voice","your presence","your sleepy voice in the morning","your giggles","your hugs that feel like home"];
+
+document.body.addEventListener("click", function(e){
+  if(e.target.closest(".btn")||e.target.closest(".play")) return;
+  const span=document.createElement("span");
+  span.classList.add("compliment");
+  span.textContent=compliments[Math.floor(Math.random()*compliments.length)];
+  document.body.appendChild(span);
+  span.style.left=e.clientX+'px';
+  span.style.top=e.clientY+'px';
+  setTimeout(()=>span.remove(),2000);
+});
+</script>
+</body>
+</html>
